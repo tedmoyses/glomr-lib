@@ -28,8 +28,22 @@ class BuildService {
     $this->builders[] = $builder;
   }
 
-  public function runServer(){
-    if($this->server === null) $this->server = new PhpServer();
+  public function runServer(string $address = '0.0.0.0', int $port = 8080, string $root = './build'){
+    if($this->server === null) $this->server = new PhpServer($address, $port, $root);
+  }
+
+  public function watch(int $interval,  $usePoller = false ){
+    if($this->watcher === null){
+      if(defined(IN_CLOSE_WRITE) && !$usePoller){
+        $this->watcher = new InotifyEventsWatcher($this->buildContext, $interval);
+      } else {
+        $this->watcher = new PollWatcher($this->buildContext, $interval);
+      }
+    }
+    Logr::info("Watching source files, press Ctrl + C to quit");
+    while($this->watcher->watch()){
+      $this->build();
+    }
   }
 
   public function build(){

@@ -23,10 +23,10 @@ class BladeBuilderTest extends GlomrTestCase {
   public function testBuild() {
     $this->fixture->build(['testBuildVariable' => 'testBuildVariableValue']);
     $outputFilePath = $this->buildContext->getPath('build') . '/test.html';
-    $this->assertTrue(file_exists($outputFilePath));
+    $this->assertFileExists($outputFilePath);
     $content = file_get_contents($outputFilePath);
-    $this->assertTrue(strpos($content, '<title>Testing Blade Builder</title>') !== false);
-    $this->assertTrue(strpos($content, '<p>Test content</p>') !== false);
-    $this->assertTrue(strpos($content, '<p>testBuildVariableValue</p>') !== false);
+    $this->assertContains('<title>Testing Blade Builder</title>', $content);
+    $this->assertContains('<p>Test content</p>', $content);
+    $this->assertContains('<p>testBuildVariableValue</p>', $content);
   }
 }

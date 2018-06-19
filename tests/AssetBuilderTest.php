@@ -54,51 +54,51 @@ EOT;
     $this->fixture->build();
     $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/site.js';
 
-    $this->assertTrue(file_exists($scriptOutputPath));
+    $this->assertFileExists($scriptOutputPath);
 
     $scriptContent = file_get_contents($scriptOutputPath);
 
     //testing var and comments present in final files
-    $this->assertTrue(strpos($scriptContent, 'First comment') !== false);
-    $this->assertTrue(strpos($scriptContent, 'testvar') !== false);
-    $this->assertTrue(strpos($scriptContent, '//Second comment') !== false);
-    $this->assertTrue(strpos($scriptContent, 'anothertest') !== false);
-    $this->assertTrue(strpos($scriptContent, 'foo + "bar"') !== false);
+    $this->assertContains('First comment', $scriptContent);
+    $this->assertContains('testvar', $scriptContent);
+    $this->assertContains('//Second comment', $scriptContent );
+    $this->assertContains('anothertest', $scriptContent);
+    $this->assertContains('foo + "bar"', $scriptContent);
   }
 
   public function testBuildJsLowCompression(){
-    putenv('compression=low');
+    $this->fixture->setCompression('low');
     $this->fixture->build();
     $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/site.js';
 
-    $this->assertTrue(file_exists($scriptOutputPath));
+    $this->assertFileExists($scriptOutputPath);
 
     $scriptContent = file_get_contents($scriptOutputPath);
 
     //testing var and comments are NOT present in final files
-    $this->assertTrue(strpos($scriptContent, 'First comment') === false);
-    $this->assertTrue(strpos($scriptContent, 'testvar') !== false);
-    $this->assertTrue(strpos($scriptContent, '//Second comment') === false);
-    $this->assertTrue(strpos($scriptContent, 'anothertest') !== false);
-    $this->assertTrue(strpos($scriptContent, 'foo+"bar"') !== false);
+    $this->assertFalse(strpos($scriptContent, 'First comment'));
+    $this->assertContains('testvar', $scriptContent);
+    $this->assertFalse(strpos($scriptContent, '//Second comment'));
+    $this->assertContains('anothertest', $scriptContent);
+    $this->assertContains('foo+"bar"', $scriptContent);
   }
 
   public function testBuildJsHighCompression(){
-    putenv('compression=high');
+    $this->fixture->setCompression('high');
     $this->fixture->build();
     $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/site.js';
 
-    $this->assertTrue(file_exists($scriptOutputPath));
+    $this->assertFileExists($scriptOutputPath);
 
     $scriptContent = file_get_contents($scriptOutputPath);
 
     //testing var and comments are NOT present in final files
     //and var names should be replaced by stuff
-    $this->assertTrue(strpos($scriptContent, 'First comment') === false);
-    $this->assertTrue(strpos($scriptContent, 'testvar') === false);
-    $this->assertTrue(strpos($scriptContent, '//Second comment') === false);
-    $this->assertTrue(strpos($scriptContent, 'anothertest') !== false);
-    $this->assertTrue(strpos($scriptContent, 'foo+"bar"') === false);
+    $this->assertFalse(strpos($scriptContent, 'First comment'));
+    $this->assertFalse(strpos($scriptContent, 'testvar'));
+    $this->assertFalse(strpos($scriptContent, '//Second comment'));
+    $this->assertContains('anothertest', $scriptContent);
+    $this->assertFalse(strpos($scriptContent, 'foo+"bar"'));
   }
 
   public function testBuildCssNoCompression(){
@@ -106,27 +106,27 @@ EOT;
     $this->fixture->build();
     $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/css/site.css';
 
-    $this->assertTrue(file_exists($scriptOutputPath));
+    $this->assertFileExists($scriptOutputPath);
 
     $scriptContent = file_get_contents($scriptOutputPath);
 
     //check we still have our declarations - all in one file
-    $this->assertTrue(strpos($scriptContent, 'body { color: red } ') !== false);
-    $this->assertTrue(strpos($scriptContent, 'body { font-size: 20px } ') !== false);
+    $this->assertContains('body { color: red } ', $scriptContent);
+    $this->assertContains('body { font-size: 20px } ', $scriptContent);
   }
 
   public function testBuildCssWithCompression(){
-    putenv('compression=low');
+    $this->fixture->setCompression('low');
     $this->fixture->build();
     $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/css/site.css';
 
-    $this->assertTrue(file_exists($scriptOutputPath));
+    $this->assertFileExists($scriptOutputPath);
 
     $scriptContent = file_get_contents($scriptOutputPath);
 
     //check we still have our declarations wihtout wihitespace - all in one file
-    $this->assertTrue(strpos($scriptContent, 'body{color:red}') !== false);
-    $this->assertTrue(strpos($scriptContent, 'body{font-size:20px}') !== false);
+    $this->assertContains('body{color:red}', $scriptContent);
+    $this->assertContains('body{font-size:20px}', $scriptContent);
   }
 
   public function testBuildImages() {
@@ -135,9 +135,9 @@ EOT;
     $gifImage = $this->buildContext->getPath('build') . '/assets/images/image.gif';
     $jpgImage = $this->buildContext->getPath('build') . '/assets/images/image.jpg';
 
-    $this->assertTrue(file_exists($pngImage));
-    $this->assertTrue(file_exists($gifImage));
-    $this->assertTrue(file_exists($jpgImage));
+    $this->assertFileExists($pngImage);
+    $this->assertFileExists($gifImage);
+    $this->assertFileExists($jpgImage);
   }
 
 }

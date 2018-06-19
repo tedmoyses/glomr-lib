@@ -18,6 +18,6 @@ class PolWatcherTest extends GlomrTestCase {
   public function testPollWatcher (){
     popen("php tests/bin/writefile.php test.txt 'Testing!' &", "r");
     //Watcher should eventually return true once the above hack has created a file
-    $this->assertTrue($this->fixture->watchBuild());
+    $this->assertTrue($this->fixture->watch());
   }
 }

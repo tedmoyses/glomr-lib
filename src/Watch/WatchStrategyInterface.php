@@ -3,5 +3,5 @@
 namespace Glomr\Watch;
 
 interface WatchStrategyInterface {
-  public function watchBuild();
+  public function watch();
 }

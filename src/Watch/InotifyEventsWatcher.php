@@ -10,9 +10,9 @@ class InotifyEventsWatcher implements WatchStrategyInterface {
   private $watchResource;
   const watchEvents = IN_CLOSE_WRITE | IN_CREATE | IN_DELETE_SELF;
   private $buildContext;
-  private $interval = 500;
+  private $interval;
 
-  public function __construct(\Glomr\Build\BuildContext $buildContext){
+  public function __construct(\Glomr\Build\BuildContext $buildContext, int $interval = 500){
     $this->buildContext = $buildContext;
     if(!function_exists('inotify_init')){
       throw new \Exception('Inotify not installed, use Poller or other watch strategy');
@@ -23,11 +23,10 @@ class InotifyEventsWatcher implements WatchStrategyInterface {
     foreach($this->buildContext->fetchSourceDirectories() as $dir) {
       $this->addWatchDirectory($dir);
     }
-
-    $this->interval = getenv('interval') ? getenv('interval') : $this->interval;
+    $this->interval = $interval;
   }
 
-  public function watchBuild(){
+  public function watch(){
     while(true) {
       $events = $this->getEvents();
       if($events !== false) Logr::debug("Inotify watch events", $events);

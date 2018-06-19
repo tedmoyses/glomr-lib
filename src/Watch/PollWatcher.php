@@ -7,14 +7,15 @@ use Glomr\Watch\WatchStrategyInterface;
 class PollWatcher implements WatchStrategyInterface {
   private $buildContext;
   private $lastBuildTime = 0;
-  private $interval = 500;
+  private $interval;
 
-  public function __construct(\Glomr\Build\BuildContext $buildContext) {
+  public function __construct(\Glomr\Build\BuildContext $buildContext, int $interval = 500) {
     $this->buildContext = $buildContext;
-    $this->interval = getenv('interval') ? getenv('interval') : $this->interval;
+    $this->interval = $interval;
+    // $this->interval = getenv('interval') ? getenv('interval') : $this->interval;
   }
 
-  public function watchBuild(){
+  public function watch(){
     while(true){
       $build = false;
       foreach($this->buildContext->fetchSourceFiles() as $file){

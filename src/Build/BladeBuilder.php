@@ -29,6 +29,11 @@ class BladeBuilder implements BuilderInterface {
   }
 
   public function build(array $buildArgs = []) {
+    $contextPath = $this->buildContext->getPath('source') . '/' . $this->context;
+    if(!file_exists($contextPath) && !is_dir($contextPath)){
+      throw new \RuntimeException("Context {$this->context} does not exist in " . $this->buildContext->getPath('source'));
+    }
+
     foreach($this->buildContext->fetchSourceFiles($this->context, $this->regex) as $viewTemplate){
       $viewName = $this->viewNameFromSource($viewTemplate);
       $destination = $this->buildPathFromSource($viewTemplate);

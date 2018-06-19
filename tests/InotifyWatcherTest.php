@@ -12,9 +12,9 @@ class InotifyWatcher extends GlomrTestCase {
     $this->fixture = new InotifyEventsWatcher($this->buildContext);
   }
 
-  public function testWatchBuild(){
+  public function testWatch(){
     popen("php tests/bin/writefile.php test.txt 'Testing!' &", "r");
     //Watcher should eventually return true once the above hack has created a file
-    $this->assertTrue($this->fixture->watchBuild());
+    $this->assertTrue($this->fixture->watch());
   }
 }
