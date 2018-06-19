@@ -11,8 +11,7 @@ class PollWatcher implements WatchStrategyInterface {
 
   public function __construct(\Glomr\Build\BuildContext $buildContext, int $interval = 500) {
     $this->buildContext = $buildContext;
-    $this->interval = $interval;
-    // $this->interval = getenv('interval') ? getenv('interval') : $this->interval;
+    $this->interval = $interval;  
   }
 
   public function watch(){
