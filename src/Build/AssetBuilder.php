@@ -107,7 +107,7 @@ class AssetBuilder implements BuilderInterface {
       $images = $this->buildContext->fetchSourceFiles('assets/images');
       foreach($images as $src){
         $dest = $this->setupPath(str_replace($this->buildContext->getPath('source'), "", $src));
-        if((file_exists($dest) && mtime($src) > mtime($dest)) || !file_exists($dest)) {
+        if((file_exists($dest) && microtime($src) > microtime($dest)) || !file_exists($dest)) {
           copy($src, $dest);
         }
       }
