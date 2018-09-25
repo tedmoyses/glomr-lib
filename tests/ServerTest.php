@@ -24,13 +24,23 @@ class ServerTest extends GlomrTestCase {
    * @return [type] [description]
    */
   public function testServerRejectsBadPath(){
-    $server = new PhpServer('0.0.0.0', 9999, 'pathdoesnotexist');
+    $server = new PhpServer('0.0.0.0', 9999, 'pathdoesnotexist', "test/serve.php");
+    $server = null;
+  }
+
+  /**
+   * @expectedException RuntimeException
+   * @return [type] [description]
+   */
+  public function testServerRejectsBadScript(){
+    $server = new PhpServer('0.0.0.0', 9999, './build', "test/notascript.php");
     $server = null;
   }
 
   public function testServerRunsAndStops(){
-    $server = new PhpServer('0.0.0.0', 9999, './tests/build');
-    $commandString = $server->getPhpCommand();
+    $server = new PhpServer('0.0.0.0', 9999, './tests/build', "tests/serve.php");
+    $commandString = trim($server->getPhpCommand());
+    $this->assertEquals("php -S 0.0.0.0:9999 -t ./tests/build tests/serve.php", $commandString);
     $pid = $server->getPid();
 
     exec("pgrep -f '$commandString'", $output, $returnVar);

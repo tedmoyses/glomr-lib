@@ -18,7 +18,7 @@ class BuildServiceTest extends GlomrTestCase {
   }
 
   public function testCanRunServer(){
-    $this->fixture->runServer('0.0.0.0', 8080, './tests/build');
+    $this->fixture->runServer('0.0.0.0', 8080, './tests/build', "tests/serve.php");
     exec("pgrep -f 'php -S'", $output, $return);
     $this->assertTrue(is_numeric($return));
   }

@@ -1,0 +1,10 @@
+*Fix blade builder to better handle missing directories such as src and src/templates
+*Fix asset builder to better handle missing directories such as src/assets/js
+*Improve the log format to remove timestamp and channel - basically make it echo out?
+*Maybe see if we can't improve how we instantiate the watcher (in build service?) and start watching the build
+*configure watcher inteval in constructor
+*Move some server confg to constructor
+*rely less on env vars to build and do stuff here
+*update notes and examples in readme
+Remove hard coded reference to serve.php in PhpServer - replace with optional constructor dependency and update tests
+getPhpCommand will have to handle having null server file and reply without it

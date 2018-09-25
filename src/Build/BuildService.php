@@ -28,8 +28,8 @@ class BuildService {
     $this->builders[] = $builder;
   }
 
-  public function runServer(string $address = '0.0.0.0', int $port = 8080, string $root = './build'){
-    if($this->server === null) $this->server = new PhpServer($address, $port, $root);
+  public function runServer(string $address = '0.0.0.0', int $port = 8080, string $root = './build', $script = "script.php"){
+    if($this->server === null) $this->server = new PhpServer($address, $port, $root, $script);
   }
 
   public function watch(int $interval,  $usePoller = false ){

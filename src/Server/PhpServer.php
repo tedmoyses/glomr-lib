@@ -3,6 +3,7 @@
 namespace Glomr\Server;
 
 use Symfony\Component\Process\Process;
+use Glomr\Log\Logr;
 
 class PhpServer {
   private $process;
@@ -10,13 +11,16 @@ class PhpServer {
   private $address;
   private $path;
 
-  public function __construct(string $address = '0.0.0.0', int $port = 8080, string $path = './build'){
+  public function __construct(string $address = '0.0.0.0', int $port = 8080, string $path = './build', $script = "serve.php"){
     $this->setAddress($address);
     $this->port = $port;
     $this->setPath($path);
+    $this->setScript($script);
     $this->process = new Process($this->getPhpCommand());
     $this->process->disableOutput();
+
     $this->process->start();
+    Logr::info("Started PHP server on {$this->address}:{$this->port} serving {$this->path}");
   }
 
   public function setAddress($address){
@@ -35,8 +39,16 @@ class PhpServer {
     }
   }
 
+  public function setScript($script){
+    if($script == "" || is_file($script)){
+      $this->script = $script;
+    } else {
+      throw new \RuntimeException("Server script does not exist");
+    }
+  }
+
   public function getPhpCommand(){
-    return "php -S {$this->address}:{$this->port} -t {$this->path} serve.php";
+    return "php -S {$this->address}:{$this->port} -t {$this->path} {$this->script}";
   }
 
   public function getPid(){
