@@ -11,10 +11,13 @@ class PhpServer {
   private $address;
   private $path;
 
-  public function __construct(string $address = '0.0.0.0', int $port = 8080, string $path = './build', $script = "serve.php"){
+  public function __construct(string $address = '0.0.0.0', int $port = 8080, string $path = './build', $script = ""){
     $this->setAddress($address);
     $this->port = $port;
     $this->setPath($path);
+    if($script == ""){
+      $script = __DIR__ . "server.php";
+    }
     $this->setScript($script);
     $this->process = new Process($this->getPhpCommand());
     $this->process->disableOutput();
