@@ -46,13 +46,13 @@ class BuildService {
     }
   }
 
-  public function build(){
+  public function build($buildArgs = []){
     $starttime = microtime(true);
     Logr::info("Starting build ...");
-    $buildID = substr(sha1(microtime()), 0, 7);
+    $buildArgs['buildID'] = substr(sha1(microtime()), 0, 7);
     foreach($this->builders as $builder) {
       if(method_exists($builder, 'beforeBuild')) $builder->beforeBuild();
-      $builder->build(['buildID' => $buildID]);
+      $buildArgs = array_merge($buildArgs, $builder->build($buildArgs));
       if(method_exists($builder, 'afterBuild')) $builder->afterBuild();
     }
 

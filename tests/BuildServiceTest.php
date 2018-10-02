@@ -12,6 +12,7 @@ class BuildServiceTest extends GlomrTestCase {
       ->disableOriginalConstructor()
       ->setMethods(['build'])
       ->getMock();
+    $mockBuilder->method('build')->will($this->returnValue([]));
 
     $this->fixture->registerBuilder($mockBuilder);
     $this->assertTrue($this->fixture->build());

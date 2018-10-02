@@ -51,6 +51,11 @@ class AssetBuilder implements BuilderInterface {
     $this->buildCssAssets();
 
     $this->moveImages();
+
+    return array_merge($buildArgs, ['assets' => [
+      'siteCssFile' => $this->siteCssFile,
+      'siteJsFile' => $this->siteJsFile
+    ]]);
   }
 
   private function buildJsAssets(){

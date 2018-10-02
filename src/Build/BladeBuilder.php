@@ -47,6 +47,7 @@ class BladeBuilder implements BuilderInterface {
         Logr::log(Logr::Error, "Cannot find view! Name = ${$viewName}, path ${destination}\n");
       }
     }
+    return $buildArgs;
   }
 
   public function beforeBuild(){

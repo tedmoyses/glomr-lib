@@ -16,7 +16,7 @@ class PhpServer {
     $this->port = $port;
     $this->setPath($path);
     if($script == ""){
-      $script = __DIR__ . "server.php";
+      $script = __DIR__ . "/server.php";
     }
     $this->setScript($script);
     $this->process = new Process($this->getPhpCommand());
