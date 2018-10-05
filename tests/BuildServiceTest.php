@@ -10,7 +10,7 @@ class BuildServiceTest extends GlomrTestCase {
   public function testCanBuild(){
     $mockBuilder = $this->getMockBuilder('Glomr\Build\BladeBuilder')
       ->disableOriginalConstructor()
-      ->setMethods(['build'])
+      ->setMethods(['build', 'beforeBuild', 'AfterBuild'])
       ->getMock();
     $mockBuilder->method('build')->will($this->returnValue([]));
 

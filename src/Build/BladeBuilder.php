@@ -28,6 +28,28 @@ class BladeBuilder implements BuilderInterface {
     $this->context = $context;
   }
 
+  public function beforeBuild(){
+    $this->blade->compiler()->directive('cssScripts', function($expression){
+      $output = "";
+      if(is_iterable($expression)){
+        foreach($expressions as $jsPath){
+          $ouput .= '<link rel="stylesheet" href="' . htmlentities($file) .  '" />' . "\n";
+        }
+      }
+      return $output;
+    });
+
+    $this->blade->compiler()->directive('jsScripts', function($expression){
+      $output = "";
+      if(is_iterable($expression)){
+        foreach($expressions as $jsPath){
+          $ouput .= '<script type="javascript" src="' . htmlentities($file) .  '" ></script>' . "\n";
+        }
+      }
+      return $output;
+    });
+  }
+
   public function build(array $buildArgs = []) {
     $contextPath = $this->buildContext->getPath('source') . '/' . $this->context;
     if(!file_exists($contextPath) && !is_dir($contextPath)){
@@ -48,10 +70,6 @@ class BladeBuilder implements BuilderInterface {
       }
     }
     return $buildArgs;
-  }
-
-  public function beforeBuild(){
-    return;
   }
 
   public function afterBuild(){

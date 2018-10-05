@@ -12,6 +12,7 @@ class AssetBuilderTest extends GlomrTestCase {
     mkdir($this->buildContext->getPath('source') . '/assets/js', 0777, true);
     mkdir($this->buildContext->getPath('source') . '/assets/css', 0777, true);
     mkdir($this->buildContext->getPath('source') . '/assets/images', 0777, true);
+    $this->buildContext->setEnv('production');
 
     $js1 = <<<EOT
 /**
@@ -51,8 +52,9 @@ EOT;
   }
 
   public function testBuildJsNoCompression(){
-    $this->fixture->build();
-    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/site.js';
+    $this->fixture->beforeBuild();
+    $this->fixture->build(['buildID' => 'testbuild']);
+    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/testbuild-site.js';
 
     $this->assertFileExists($scriptOutputPath);
 
@@ -68,8 +70,9 @@ EOT;
 
   public function testBuildJsLowCompression(){
     $this->fixture->setCompression('low');
-    $this->fixture->build();
-    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/site.js';
+    $this->fixture->beforeBuild();
+    $this->fixture->build(['buildID' => 'testbuild']);
+    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/testbuild-site.js';
 
     $this->assertFileExists($scriptOutputPath);
 
@@ -85,8 +88,9 @@ EOT;
 
   public function testBuildJsHighCompression(){
     $this->fixture->setCompression('high');
-    $this->fixture->build();
-    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/site.js';
+    $this->fixture->beforeBuild();
+    $this->fixture->build(['buildID' => 'testbuild']);
+    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/js/testbuild-site.js';
 
     $this->assertFileExists($scriptOutputPath);
 
@@ -102,9 +106,9 @@ EOT;
   }
 
   public function testBuildCssNoCompression(){
-    putenv('compression');
-    $this->fixture->build();
-    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/css/site.css';
+    $this->fixture->beforeBuild();
+    $this->fixture->build(['buildID' => 'testbuild']);
+    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/css/testbuild-site.css';
 
     $this->assertFileExists($scriptOutputPath);
 
@@ -117,8 +121,9 @@ EOT;
 
   public function testBuildCssWithCompression(){
     $this->fixture->setCompression('low');
-    $this->fixture->build();
-    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/css/site.css';
+    $this->fixture->beforeBuild();
+    $this->fixture->build(['buildID' => 'testbuild']);
+    $scriptOutputPath = $this->buildContext->getPath('build') . '/assets/css/testbuild-site.css';
 
     $this->assertFileExists($scriptOutputPath);
 
@@ -130,7 +135,8 @@ EOT;
   }
 
   public function testBuildImages() {
-    $this->fixture->build();
+    $this->fixture->beforeBuild();
+    $this->fixture->build(['buildID' => 'testbuild']);
     $pngImage = $this->buildContext->getPath('build') . '/assets/images/image.png';
     $gifImage = $this->buildContext->getPath('build') . '/assets/images/image.gif';
     $jpgImage = $this->buildContext->getPath('build') . '/assets/images/image.jpg';
@@ -138,6 +144,16 @@ EOT;
     $this->assertFileExists($pngImage);
     $this->assertFileExists($gifImage);
     $this->assertFileExists($jpgImage);
+  }
+
+  public function testDevBuildPreservesAssets(){
+    $this->buildContext->setEnv('dev');
+    $this->fixture->build(['buildID' => 'testbuild']);
+
+    $this->assertFileExists($this->buildContext->getPath('build') . '/assets/js/Bsecond.js');
+    $this->assertFileExists($this->buildContext->getPath('build') . '/assets/js/Cthird.js');
+    $this->assertFileExists($this->buildContext->getPath('build') . '/assets/css/first.css');
+    $this->assertFileExists($this->buildContext->getPath('build') . '/assets/css/second.css');
   }
 
 }

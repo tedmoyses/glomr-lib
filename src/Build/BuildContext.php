@@ -9,8 +9,13 @@ class BuildContext {
   private $paths = [
     'build' => './build',
     'source' => './src',
-    'cache' => './cache'
+    'cache' => './cache',
+    'assetJs' => 'assets/js',
+    'assetCss' => 'assets/css',
+    'assetImages' => 'assets/images'
   ];
+
+  private $environment = 'dev';
 
   public function setPath(string $key, string $value){
     $this->paths[$key] = $value;
@@ -18,6 +23,14 @@ class BuildContext {
 
   public function getPath($path){
     return $this->paths[$path];
+  }
+
+  public function setEnv($env){
+    if(in_array($env, ['production', 'dev'])) $this->environment = $env;
+  }
+
+  public function getEnv(){
+    return $this->environment;
   }
 
   public function fetchSourceDirectories() {

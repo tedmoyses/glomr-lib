@@ -12,12 +12,25 @@ use Assetic\Cache\FilesystemCache;
 
 class AssetBuilder implements BuilderInterface {
   private $buildContext;
-  private $siteJsFile = 'assets/js/site.js';
-  private $siteCssFile = 'assets/css/site.css';
+  private $siteJsFile;
+  private $siteCssFile;
+  private $cssPath;
+  private $jsPath;
+  private $imagesPath;
 
   public function __construct(\Glomr\Build\BuildContext $buildContext, string $compression = ''){
     $this->buildContext = $buildContext;
     $this->compression = $compression;
+    $this->jsPath = $this->buildContext->getPath('assetJs');
+    $this->cssPath = $this->buildContext->getPath('assetCss');
+    $this->imagesPath = $this->buildContext->getPath('assetImages');
+  }
+
+  private function setSiteJsFile(string $buildId = ""){
+    $this->siteJsFile = $this->jsPath . "/$buildId-site.js";
+  }
+  private function setSiteCssFile(string $buildId = ""){
+    $this->siteCssFile = $this->cssPath . "/$buildId-site.css";
   }
 
   public function setCompression(string $compression){
@@ -35,27 +48,49 @@ class AssetBuilder implements BuilderInterface {
 
   public function beforeBuild(){
     //clear out any css or js files
-    $path = $this->buildContext->getPath('build') . '/assets/';
-    $files = array_merge(glob("${path}css/*"), glob("${path}js/*"));
+    //$path = $this->buildContext->getPath('build') . '/assets/';
+    $path = $this->buildContext->getPath('build');
+    $files = array_merge(glob($path ."/" . $this->cssPath . "/*"),
+      glob($path . "/" . $this->jsPath . "/*"));
     foreach($files as $file){
       unlink($file);
     }
+    $this->cache = new FilesystemCache($this->buildContext->getPath('cache') . DIRECTORY_SEPARATOR . 'assetic');
   }
 
   public function build(array $buildArgs = []){
+    if(!isset($buildArgs['buildID'])){
+      $buildArgs['buildID'] = substr(sha1(microtime()), 0, 7);
+    }
+    $this->setSiteJsFile($buildArgs['buildID']);
+    $this->setSiteCssFile($buildArgs['buildID']);
 
-    $this->cache = new FilesystemCache($this->buildContext->getPath('cache') . DIRECTORY_SEPARATOR . 'assetic');
+    if($this->buildContext->getEnv() == 'production') {
+      $this->buildJsAssets();
+      $this->buildCssAssets();
+    } else {
+      $this->moveFiles($this->jsPath);
+      $this->moveFiles($this->cssPath);
+    }
 
-    $this->buildJsAssets();
+    $this->moveFiles($this->imagesPath);
 
-    $this->buildCssAssets();
+    $buildArgs['assets'] = [
+      'js' => $this->getBuiltAssets($this->jsPath),
+      'css' => $this->getBuiltAssets($this->cssPath)
+    ];
+    return $buildArgs;
+  }
 
-    $this->moveImages();
-
-    return array_merge($buildArgs, ['assets' => [
-      'siteCssFile' => $this->siteCssFile,
-      'siteJsFile' => $this->siteJsFile
-    ]]);
+  private function getBuiltAssets($from){
+    $files = [];
+    $directory = new \RecursiveDirectoryIterator($this->buildContext->getPath('build') . "/$from",
+      \RecursiveDirectoryIterator::SKIP_DOTS);
+    $iterator = new \RecursiveIteratorIterator($directory);
+    foreach(new \RecursiveIteratorIterator($directory) as $file){
+      $files[] = "$file";
+    }
+    return $files;
   }
 
   private function buildJsAssets(){
@@ -75,9 +110,9 @@ class AssetBuilder implements BuilderInterface {
 
     $jsCollection = new AssetCollection([], $jsFilters);
     try {
-      $jsFiles = $this->buildContext->fetchSourceFiles("assets/js", "/^.+\.js$/i");
+      $jsFiles = $this->buildContext->fetchSourceFiles($this->jsPath, "/^.+\.js$/i");
     } catch (\Exception $e) {
-      Logr::warn("There are no JS files in " . $this->buildContext->getPath('source') . "/assets/js" );
+      Logr::warn("There are no JS files in " . $this->buildContext->getPath('source') . "/" . $this->$jsPath );
       return;
     }
     foreach($jsFiles as $file){
@@ -94,9 +129,9 @@ class AssetBuilder implements BuilderInterface {
 
     $cssCollection = new AssetCollection([], $cssFilters);
     try{
-      $cssFiles = $this->buildContext->fetchSourceFiles("assets/css", "/^.+\.css$/i");
+      $cssFiles = $this->buildContext->fetchSourceFiles($this->cssPath, "/^.+\.css$/i");
     } catch (\Exception $e){
-      Logr::warn("There are no CSS assets files in " . $this->buildContext->getPath('source') . "/assets/css");
+      Logr::warn("There are no CSS assets files in " . $this->buildContext->getPath('source') . "/" . $this->cssPath);
       return;
     }
     foreach($cssFiles as $file){
@@ -105,17 +140,20 @@ class AssetBuilder implements BuilderInterface {
     file_put_contents($this->setupPath($this->siteCssFile), $cssCollection->dump());
   }
 
-  private function moveImages(){
-    // do images - no compression for now
+  private function moveFiles($dir){
     // is copy good enough for this or should it be stream based?
-    if(is_dir($this->buildContext->getPath('source') . "/assets/images")) {
-      $images = $this->buildContext->fetchSourceFiles('assets/images');
-      foreach($images as $src){
-        $dest = $this->setupPath(str_replace($this->buildContext->getPath('source'), "", $src));
-        if((file_exists($dest) && microtime($src) > microtime($dest)) || !file_exists($dest)) {
-          copy($src, $dest);
-        }
+    if(is_dir($this->buildContext->getPath('source') . '/' . $dir)) {
+      $files = $this->buildContext->fetchSourceFiles($dir);
+      foreach($files as $file){
+        $this->moveFile($file);
       }
+    }
+  }
+
+  private function moveFile($file){
+    $dest = $this->setupPath(str_replace($this->buildContext->getPath('source'), "", $file));
+    if((file_exists($dest) && microtime($file) > microtime($dest)) || !file_exists($dest)) {
+      copy($file, $dest);
     }
   }
 

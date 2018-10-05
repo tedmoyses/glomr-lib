@@ -8,4 +8,4 @@
 *update notes and examples in readme
 *Remove hard coded reference to serve.php in PhpServer - replace with optional constructor dependency and update tests
 *getPhpCommand will have to handle having null server file and reply without it
-Allow creating of build variables in each builder to be passed to the next builder by returning build vars from build and merging them
+*Allow creating of build variables in each builder to be passed to the next builder by returning build vars from build and merging them
