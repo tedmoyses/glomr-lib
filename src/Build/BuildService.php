@@ -3,6 +3,8 @@
 namespace Glomr\Build;
 
 use Glomr\Server\PhpServer;
+use Glomr\Watch\InotifyEventsWatcher;
+use Glomr\Watch\PollWatcher;
 use Glomr\Log\Logr;
 
 class BuildService {

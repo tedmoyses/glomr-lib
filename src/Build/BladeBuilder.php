@@ -29,23 +29,28 @@ class BladeBuilder implements BuilderInterface {
   }
 
   public function beforeBuild(){
-    $this->blade->compiler()->directive('cssScripts', function($expression){
-      $output = "";
-      if(is_iterable($expression)){
-        foreach($expressions as $jsPath){
-          $ouput .= '<link rel="stylesheet" href="' . htmlentities($file) .  '" />' . "\n";
-        }
-      }
-      return $output;
+    $this->blade->compiler()->directive('style', function($expression){
+      return "<?php echo '<link rel=\"stylesheet\" href=\"' . htmlentities(\$expression) .  '\" />'; ?>";
     });
 
-    $this->blade->compiler()->directive('jsScripts', function($expression){
-      $output = "";
-      if(is_iterable($expression)){
-        foreach($expressions as $jsPath){
-          $ouput .= '<script type="javascript" src="' . htmlentities($file) .  '" ></script>' . "\n";
-        }
-      }
+    $this->blade->compiler()->directive('script', function($expression){
+      return "<?php echo '<script type=\"text/javascript\" src=\"' . htmlentities(\$expression) .  '\" /></script>'; ?>";
+    });
+
+    $this->blade->compiler()->directive('assets', function($expression){
+      $output = '<?php
+        $assets = array_map(function ($asset){
+          switch(pathinfo($asset, PATHINFO_EXTENSION)){
+            case "js":
+              return \'<script type="text/javascript" src="\' . htmlentities($asset) .  \'" /></script>\';
+            case "css":
+              return \'<link rel="stylesheet" href="\' . htmlentities($asset) . \'" />\';
+            default:
+              return \'\';
+          }
+        }, (array) '. $expression . ');
+        echo implode("\n", $assets);
+      ?>';
       return $output;
     });
   }

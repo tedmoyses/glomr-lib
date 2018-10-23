@@ -75,20 +75,19 @@ class AssetBuilder implements BuilderInterface {
 
     $this->moveFiles($this->imagesPath);
 
-    $buildArgs['assets'] = [
-      'js' => $this->getBuiltAssets($this->jsPath),
-      'css' => $this->getBuiltAssets($this->cssPath)
-    ];
+    $buildArgs['assets'] = array_merge($this->getBuiltAssets($this->jsPath),
+      $this->getBuiltAssets($this->cssPath));
     return $buildArgs;
   }
 
   private function getBuiltAssets($from){
     $files = [];
-    $directory = new \RecursiveDirectoryIterator($this->buildContext->getPath('build') . "/$from",
+    $build = $this->buildContext->getPath('build');
+    $directory = new \RecursiveDirectoryIterator($build . "/$from",
       \RecursiveDirectoryIterator::SKIP_DOTS);
     $iterator = new \RecursiveIteratorIterator($directory);
     foreach(new \RecursiveIteratorIterator($directory) as $file){
-      $files[] = "$file";
+      $files[] = str_replace($build, "", "$file");
     }
     return $files;
   }
