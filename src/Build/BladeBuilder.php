@@ -30,11 +30,11 @@ class BladeBuilder implements BuilderInterface {
 
   public function beforeBuild(){
     $this->blade->compiler()->directive('style', function($expression){
-      return "<?php echo '<link rel=\"stylesheet\" href=\"' . htmlentities(\$expression) .  '\" />'; ?>";
+      return '<link rel="stylesheet" href="' . htmlentities($expression) .  '" />';
     });
 
     $this->blade->compiler()->directive('script', function($expression){
-      return "<?php echo '<script type=\"text/javascript\" src=\"' . htmlentities(\$expression) .  '\" /></script>'; ?>";
+      return '<script type="text/javascript" src="' . htmlentities($expression) .  '" /></script>';
     });
 
     $this->blade->compiler()->directive('assets', function($expression){

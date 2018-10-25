@@ -22,8 +22,13 @@ class BuildContext {
   }
 
   public function getPath($path){
-    return $this->paths[$path];
+    $dir = $this->paths[$path];
+    if(!is_dir($dir) && substr($dir, 0, 2) == './'){
+      mkdir($dir, 0777, true);
+    }
+    return $dir;
   }
+  
 
   public function setEnv($env){
     if(in_array($env, ['production', 'dev'])) $this->environment = $env;
@@ -42,7 +47,6 @@ class BuildContext {
       \RecursiveIteratorIterator::SELF_FIRST);
     $return = [];
     foreach($dirs as $dir){
-      //if(is_dir($dir)) $return[] = $dir->getFilename();
       if(is_dir($dir)) $return[] = $dir->__toString();
     }
     return $return;
