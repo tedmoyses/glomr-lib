@@ -18,8 +18,7 @@ class BladeBuilder implements BuilderInterface {
 
   public function __construct(\Glomr\Build\BuildContext $buildContext) {
     $this->buildContext = $buildContext;
-    $cachePath = $this->buildContext->getPath('cache');
-    $cachePath .= DIRECTORY_SEPARATOR . 'blade';
+    $cachePath = $this->buildContext->getPath('cache') . '/blade';
     if(!file_exists($cachePath) && !is_dir($cachePath)) mkdir($cachePath, 0777, true);
     $this->blade = new Blade($this->buildContext->getPath('source'), $cachePath);
   }
@@ -83,7 +82,7 @@ class BladeBuilder implements BuilderInterface {
 
   private function viewNameFromSource(string $path) {
     return str_replace('/', '.',
-      str_replace($this->buildContext->getPath('source') . DIRECTORY_SEPARATOR , '',
+      str_replace($this->buildContext->getPath('source') . '/' , '',
         str_replace($this->sourceExtension, '', $path)));
   }
 
@@ -92,7 +91,7 @@ class BladeBuilder implements BuilderInterface {
     //strip context from view name including first .
     //replace remaining dots in view name with slashes
     //add build extension
-    return $this->buildContext->getPath('build') . DIRECTORY_SEPARATOR .
+    return $this->buildContext->getPath('build') . '/' .
       str_replace('.', '/', str_replace($this->context . ".", '', $this->viewNameFromSource($path))) .
       $this->buildExtension;
   }

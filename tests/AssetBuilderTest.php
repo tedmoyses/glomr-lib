@@ -9,9 +9,9 @@ class AssetBuilderTest extends GlomrTestCase {
   public function setUp(){
     $this->buildContext = $this->getCleanBuildContext();
     $this->fixture = new AssetBuilder($this->buildContext);
-    mkdir($this->buildContext->getPath('source') . '/assets/js', 0777, true);
-    mkdir($this->buildContext->getPath('source') . '/assets/css', 0777, true);
-    mkdir($this->buildContext->getPath('source') . '/assets/images', 0777, true);
+    //mkdir($this->buildContext->getPath('source') . '/assets/js', 0777, true);
+    //mkdir($this->buildContext->getPath('source') . '/assets/css', 0777, true);
+    //mkdir($this->buildContext->getPath('source') . '/assets/images', 0777, true);
     $this->buildContext->setEnv('production');
 
     $js1 = <<<EOT

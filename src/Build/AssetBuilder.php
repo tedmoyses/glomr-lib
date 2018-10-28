@@ -151,7 +151,7 @@ class AssetBuilder implements BuilderInterface {
 
   private function moveFile($file){
     $dest = $this->setupPath(str_replace($this->buildContext->getPath('source'), "", $file));
-    if((file_exists($dest) && microtime($file) > microtime($dest)) || !file_exists($dest)) {
+    if((file_exists($dest) && filemtime($file) > filemtime($dest)) || !file_exists($dest)) {
       copy($file, $dest);
     }
   }

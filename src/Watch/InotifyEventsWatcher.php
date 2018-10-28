@@ -4,6 +4,7 @@ namespace Glomr\Watch;
 
 use Glomr\Watch\WatchStrategyInterface;
 use Glomr\Log\Logr;
+use Symfony\Component\Finder\Finder;
 
 class InotifyEventsWatcher implements WatchStrategyInterface {
   private $watchDirectories = [];
@@ -20,9 +21,12 @@ class InotifyEventsWatcher implements WatchStrategyInterface {
     $this->watchResource = inotify_init($this->buildContext->getPath('source'));
     stream_set_blocking($this->watchResource, 0);
     $this->addWatchDirectory($this->buildContext->getPath('source'));
-    foreach($this->buildContext->fetchSourceDirectories() as $dir) {
-      $this->addWatchDirectory($dir);
+
+    $finder = new Finder();
+    foreach($finder->directories()->in($this->buildContext->getPath('source')) as $dir){
+      $this->addWatchDirectory($dir->pathName);
     }
+    
     $this->interval = $interval;
   }
 

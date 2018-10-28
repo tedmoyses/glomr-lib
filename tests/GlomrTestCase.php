@@ -3,19 +3,28 @@
 namespace Glomr\Test;
 use Glomr\Build\BuildContext;
 use PHPUnit\Framework\TestCase;
+use League\Flysystem\Filesystem;
+use League\Flysystem\Adapter\Local;
 
 class GlomrTestCase extends TestCase{
 
-  protected $buildPath = "./tests/build";
-  protected $sourcePath = "./tests/source";
-  protected $cachePath = "./tests/cache";
+  protected $buildPath = "tests/build";
+  protected $sourcePath = "tests/source";
+  protected $cachePath = "tests/cache";
+  private $_fs = null;
+
+  protected function getFs() :Filesystem {
+    if($this->_fs === null) $this->_fs = new Filesystem(new Local('tests/'));
+    return $this->_fs;
+  }
 
   protected function delTree($dir){
+    $this->getFs()->deleteDir($dir);
+    return;
     $base = dirname(dirname(__FILE__));
     $path = realpath($dir);
 
     if(!is_dir($dir) && strpos($path, $base) !== 0){
-      var_dump($dir, $path, $base);
       throw new \RuntimeException("Canot delete path");
     } else {
       $it = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS);
@@ -33,22 +42,8 @@ class GlomrTestCase extends TestCase{
   }
 
   protected function getCleanBuildContext(){
-    if(is_dir($this->buildPath)){
-      $this->delTree($this->buildPath);
-    }
-    mkdir($this->buildPath, 0777, true);
 
-    if(is_dir($this->sourcePath)){
-      $this->delTree($this->sourcePath);
-    }
-    mkdir($this->sourcePath, 0777, true);
-
-    if(is_dir($this->cachePath)){
-      $this->delTree($this->cachePath);
-    }
-    mkdir($this->cachePath, 0777, true);
-
-    $buildContext = new BuildContext();
+    $buildContext = new BuildContext($this->getFs());
     $buildContext->setPath('source', $this->sourcePath);
     $buildContext->setPath('build', $this->buildPath);
     $buildContext->setPath('cache', $this->cachePath);

@@ -17,7 +17,10 @@
         "kriswallsmith/assetic": "^1.4",
         "patchwork/jsqueeze": "^2.0",
         "matthiasmullie/minify": "^1.3",
-        "tedivm/jshrink": "^1.3"
+        "tedivm/jshrink": "^1.3",
+        "illuminate/filesystem": "^5.7",
+        "symfony/finder": "^4.1",
+        "league/flysystem": "^1.0"
     },
     "autoload": {
       "psr-4": {"Glomr\\": "src/"}
