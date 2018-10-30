@@ -9,9 +9,12 @@ class AssetBuilderTest extends GlomrTestCase {
   public function setUp(){
     $this->buildContext = $this->getCleanBuildContext();
     $this->fixture = new AssetBuilder($this->buildContext);
-    //mkdir($this->buildContext->getPath('source') . '/assets/js', 0777, true);
-    //mkdir($this->buildContext->getPath('source') . '/assets/css', 0777, true);
-    //mkdir($this->buildContext->getPath('source') . '/assets/images', 0777, true);
+    //mkdir($this->sourcePath . '/assets/js', 0777, true);
+    //mkdir($this->sourcePath . '/assets/css', 0777, true);
+    //mkdir($this->sourcePath . '/assets/images', 0777, true);
+    $this->getFs($this->sourcePath . '/assets/js');
+    $this->getFs($this->sourcePath . '/assets/css');
+    $this->getFs($this->sourcePath . '/assets/images');
     $this->buildContext->setEnv('production');
 
     $js1 = <<<EOT
@@ -59,8 +62,8 @@ EOT;
     $this->assertFileExists($scriptOutputPath);
 
     $scriptContent = file_get_contents($scriptOutputPath);
-
     //testing var and comments present in final files
+
     $this->assertContains('First comment', $scriptContent);
     $this->assertContains('testvar', $scriptContent);
     $this->assertContains('//Second comment', $scriptContent );
@@ -154,6 +157,13 @@ EOT;
     $this->assertFileExists($this->buildContext->getPath('build') . '/assets/js/Cthird.js');
     $this->assertFileExists($this->buildContext->getPath('build') . '/assets/css/first.css');
     $this->assertFileExists($this->buildContext->getPath('build') . '/assets/css/second.css');
+  }
+
+  protected function tearDown(){
+    var_dump("Tearing down");
+    $this->delTree($this->sourcePath);
+    $this->delTree($this->buildPath);
+    $this->delTree($this->cachePath);
   }
 
 }

@@ -8,4 +8,5 @@
 usleep(10000);
 $file = $argv[1];
 $content = $argv[2];
-file_put_contents("./tests/source/$file", $content);
+var_dump(getcwd() . "/tests/source/$file");
+//file_put_contents(getcwd() . "/tests/source/$file", $content);

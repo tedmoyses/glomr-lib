@@ -8,44 +8,6 @@ class BuildContextTest extends GlomrTestCase {
     $this->fixture = $this->getCleanBuildContext();
   }
 
-  /**
-   * @expectedException RuntimeException
-   * @return [type] [description]
-   */
-  public function testSetInvalidPath () {
-    $this->fixture->setPath('test', 'ickles');
-  }
-
-  /**
-   * @expectedException RuntimeException
-   * @return [type] [description]
-   */
-  public function testSetDuplicatePath(){
-    $this->fixture->setPath('build', $this->fixture->getPath('source'));
-  }
-
-  /**
-   * @expectedException RuntimeException
-   * @return [type] [description]
-   */
-  public function testSetAbsolutePath(){
-    $this->fixture->setPath('build', "/tmp");
-  }
-
-  /**
-   * @expectedException RuntimeException
-   * @return [type] [description]
-   */
-  public function testSetRelativePath(){
-    $this->fixture->setPath('build', "./../../../tmp");
-  }
-
-  public function testSetPath () {
-    $this->fixture->setPath('build', 'ickle');
-    $this->assertDirectoryExists('ickle');
-    //$this->delTree($this->fixture->getPath('build'));
-  }
-
   public function testCanFindFiles(){
     $this->getFs()->write($this->sourcePath. "/Atest.txt", "this is just a test");
     $this->getFs()->write($this->sourcePath. "/Btest.html", "this is just a test");
@@ -64,24 +26,23 @@ class BuildContextTest extends GlomrTestCase {
   }
 
   public function testCanFindFilesWithContext() {
-    $this->getFs()->put($this->sourcePath. "testdirectory/test.html", "this is just a test");
-    $this->getFs()->write($this->sourcePath. "other.html", "this is just a test");
+    $this->getFs()->write($this->sourcePath. "/testdirectory/test.html", "this is just a test");
+    $this->getFs()->write($this->sourcePath. "/other.html", "this is just a test");
     $files = $this->fixture->fetchSourceFiles("testdirectory", "/^.+\.html$/i");
     $this->assertEquals(1, count($files));
     $this->assertEquals($this->sourcePath . "/testdirectory/test.html", $files[0]);
-    $this->getFs()->deleteDir('testdirectory');
+    $this->delTree('testdirectory');
   }
 
   public function testCanFindDirectories(){
-    $this->getFs()->createDir('testdirectory');
+    $this->getFs()->createDir($this->sourcePath . '/testdirectory');
     $dirs = $this->fixture->fetchSourceDirectories();
     $this->assertEquals(1, count($dirs));
     $this->assertEquals($this->sourcePath . "/testdirectory", $dirs[0]);
-    $this->assertTrue(is_dir($dirs[0]));
-    $this->getFs()->deleteDir('testdirectory');
+    $this->assertTrue(is_dir('tests/' . $dirs[0]));
   }
 
-  public function tearDown() {
+  protected function tearDown() {
     $this->delTree($this->buildPath);
     $this->delTree($this->sourcePath);
   }

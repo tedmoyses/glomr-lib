@@ -19,7 +19,10 @@ class GlomrTestCase extends TestCase{
   }
 
   protected function delTree($dir){
-    $this->getFs()->deleteDir($dir);
+    var_dump($this->getFs()->deleteDir($dir)?
+      "detlTree Success for $dir" :
+      "delTree fail for $dir"
+    );
     return;
     $base = dirname(dirname(__FILE__));
     $path = realpath($dir);
@@ -43,14 +46,19 @@ class GlomrTestCase extends TestCase{
 
   protected function getCleanBuildContext(){
 
-    $buildContext = new BuildContext($this->getFs());
+    return new BuildContext(
+      $this->getFs(),
+      $this->sourcePath,
+      $this->buildPath,
+      $this->cachePath
+    );
     $buildContext->setPath('source', $this->sourcePath);
     $buildContext->setPath('build', $this->buildPath);
     $buildContext->setPath('cache', $this->cachePath);
     return $buildContext;
   }
 
-  public function tearDown(){
+  protected function tearDown(){
     $this->delTree($this->buildPath);
     $this->delTree($this->sourcePath);
     $this->delTree($this->cachePath);

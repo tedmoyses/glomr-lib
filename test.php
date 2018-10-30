@@ -16,4 +16,8 @@ use League\Flysystem\Adapter\Local;
 $adapter = new Local(getcwd());
 $fs = new Filesystem($adapter);
 
-var_dump(array_filter($adapter->listContents('/'), function($path){if ($path['type'] === 'file') return true;}));
+//$fs->createDir('foo/bar');
+
+$fs->write('foo/bar/baz/test.html', "Testing");
+var_dump($fs->listContents('foo', true));
+$fs->deleteDir('foo');

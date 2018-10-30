@@ -13,7 +13,8 @@ class InotifyWatcher extends GlomrTestCase {
   }
 
   public function testWatch(){
-    popen("php tests/bin/writefile.php test.txt 'Testing!' &", "r");
+    $handle = popen("php tests/bin/writefile.php test.txt 'Testing!' &", "r");
+    var_dump(read($handle));
     //Watcher should eventually return true once the above hack has created a file
     $this->assertTrue($this->fixture->watch());
   }
