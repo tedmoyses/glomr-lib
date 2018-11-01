@@ -2,22 +2,37 @@
 
 use Glomr\Test\GlomrTestCase;
 use Glomr\Watch\PollWatcher;
+use Glomr\Build\BuildContext;
 
 class PolWatcherTest extends GlomrTestCase {
   public function setUp(){
 
-    $this->fixture = new PollWatcher($this->getCleanBuildContext());
+    //$this->fixture = new PollWatcher($this->getCleanBuildContext());
+    $bc = $this->getMockBuilder(BuildContext::class)
+      ->disableOriginalConstructor()
+      ->setMethods(['getPath', 'fetchSourceFiles', 'mtime'])
+      ->getMock();
+    $bc->expects($this->exactly(2))
+      ->method('fetchSourceFiles')
+      ->will($this->returnValue([$this->sourcePath. '/test.txt']));
+
+    $testfile = $this->sourcePath. '/test.txt';
+    mkdir($this->sourcePath);
+    file_put_contents($testfile, 'testing');
+
+    $bc->expects($this->exactly(2))
+      ->method('mtime')
+      ->will($this->onConsecutiveCalls(
+        filemtime($testfile),
+        999999999999999999)
+      );
+
+    $this->fixture = new PollWatcher($bc);
+
   }
 
-  /**
-   * WARNING!!! this uses a filthy hack to asyncronously create a file in the
-   * source directory. By rights it shoudl at least use the build context build
-   * path - perhaps this sould be a method on GlomrTestCase??
-   * @return [type] [description]
-   */
   public function testPollWatcher (){
-    popen("php tests/bin/writefile.php test.txt 'Testing!' &", "r");
-    //Watcher should eventually return true once the above hack has created a file
+    $this->assertTrue($this->fixture->watch());
     $this->assertTrue($this->fixture->watch());
   }
 }

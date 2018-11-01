@@ -3,22 +3,23 @@
 namespace Glomr\Watch;
 
 use Glomr\Watch\WatchStrategyInterface;
+use Glomr\Watch\WatchAbstractClass;
 
-class PollWatcher implements WatchStrategyInterface {
+class PollWatcher extends WatchAbstractClass {
   private $buildContext;
   private $lastBuildTime = 0;
-  private $interval;
+  private $interval = 500;
 
-  public function __construct(\Glomr\Build\BuildContext $buildContext, int $interval = 500) {
+  public function __construct(\Glomr\Build\BuildContext $buildContext, $options = []) {
     $this->buildContext = $buildContext;
-    $this->interval = $interval;  
+    if (isset($options['interval'])) $this->interval = $interval;
   }
 
   public function watch(){
     while(true){
       $build = false;
       foreach($this->buildContext->fetchSourceFiles() as $file){
-        if(filemtime($file) > $this->lastBuildTime){
+        if($this->buildContext->mtime($file) > $this->lastBuildTime){
           $this->lastBuildTime = filemtime($file);
           $build = true;
         }

@@ -3,31 +3,30 @@
 namespace Glomr\Watch;
 
 use Glomr\Watch\WatchStrategyInterface;
+use Glomr\Watch\WatchAbstractClass;
 use Glomr\Log\Logr;
-use Symfony\Component\Finder\Finder;
 
-class InotifyEventsWatcher implements WatchStrategyInterface {
+class InotifyEventsWatcher extends WatchAbstractClass {
   private $watchDirectories = [];
   private $watchResource;
   const watchEvents = IN_CLOSE_WRITE | IN_CREATE | IN_DELETE_SELF;
   private $buildContext;
   private $interval;
 
-  public function __construct(\Glomr\Build\BuildContext $buildContext, int $interval = 500){
+  public function __construct(\Glomr\Build\BuildContext $buildContext, array $options = []){
     $this->buildContext = $buildContext;
     if(!function_exists('inotify_init')){
       throw new \Exception('Inotify not installed, use Poller or other watch strategy');
     }
     $this->watchResource = inotify_init($this->buildContext->getPath('source'));
     stream_set_blocking($this->watchResource, 0);
-    $this->addWatchDirectory($this->buildContext->getPath('source'));
 
-    $finder = new Finder();
-    foreach($finder->directories()->in($this->buildContext->getPath('source')) as $dir){
-      $this->addWatchDirectory($dir->pathName);
+    $this->addWatchDirectory($this->buildContext->getPath('source'));
+    foreach($this->buildContext->fetchSourceDirectories() as $dir){
+      $this->addWatchDirectory($dir);
     }
-    
-    $this->interval = $interval;
+
+    if(isset($options['interval'])) $this->interval = $options['interval'];
   }
 
   public function watch(){

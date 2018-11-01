@@ -80,9 +80,13 @@ class BuildContext {
     );
   }
 
-  public function getCachePath($path) :string {
+  public function getCachePath(string $path) :string {
     $realpath = $this->getPath('cache') .'/'. $path;
     $this->_fs->createDir($realpath);
     return $realpath;
+  }
+
+  public function mtime(string $path) :int {
+    return $this->_fs->getTimestamp($path);
   }
 }

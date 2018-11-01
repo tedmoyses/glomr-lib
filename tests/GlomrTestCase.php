@@ -14,37 +14,15 @@ class GlomrTestCase extends TestCase{
   private $_fs = null;
 
   protected function getFs() :Filesystem {
-    if($this->_fs === null) $this->_fs = new Filesystem(new Local('tests/'));
+    if($this->_fs === null) $this->_fs = new Filesystem(new Local(getcwd()));
     return $this->_fs;
   }
 
   protected function delTree($dir){
-    var_dump($this->getFs()->deleteDir($dir)?
-      "detlTree Success for $dir" :
-      "delTree fail for $dir"
-    );
-    return;
-    $base = dirname(dirname(__FILE__));
-    $path = realpath($dir);
-
-    if(!is_dir($dir) && strpos($path, $base) !== 0){
-      throw new \RuntimeException("Canot delete path");
-    } else {
-      $it = new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS);
-      $files = new \RecursiveIteratorIterator($it,
-                   \RecursiveIteratorIterator::CHILD_FIRST);
-      foreach($files as $file) {
-          if ($file->isDir()){
-              rmdir($file->getRealPath());
-          } else {
-              unlink($file->getRealPath());
-          }
-      }
-      rmdir($path);
-    }
+    $this->getFs()->deleteDir($dir);
   }
 
-  protected function getCleanBuildContext(){
+  protected function getCleanBuildContext() :BuildContext {
 
     return new BuildContext(
       $this->getFs(),

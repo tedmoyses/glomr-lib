@@ -34,12 +34,19 @@ class BuildContextTest extends GlomrTestCase {
     $this->delTree('testdirectory');
   }
 
+  public function testCanGetFileMtime(){
+    $file = $this->sourcePath . '/testing.txt';
+    file_put_contents($file, '');
+    $this->assertEquals(filemtime($file), $this->fixture->mtime($file));
+    unlink($file);
+  }
+
   public function testCanFindDirectories(){
     $this->getFs()->createDir($this->sourcePath . '/testdirectory');
     $dirs = $this->fixture->fetchSourceDirectories();
     $this->assertEquals(1, count($dirs));
     $this->assertEquals($this->sourcePath . "/testdirectory", $dirs[0]);
-    $this->assertTrue(is_dir('tests/' . $dirs[0]));
+    $this->assertTrue(is_dir($dirs[0]));
   }
 
   protected function tearDown() {

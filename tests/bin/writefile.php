@@ -1,12 +1,14 @@
 <?php
 
 /**
- * This is a VERY SHADY way to get a file created in our source
+ * This is a VERY SHADY way to get a file created with a short delay
  * it will fail if called from anywhere but our project root
- * it will fail if tests/source directory doesn't exist i.e. not udring a test run
+ * it will fail if directory doesn't exist i.e. not during a test run
+ * It probably should validate the path somehow
  */
-usleep(10000);
+
+
 $file = $argv[1];
-$content = $argv[2];
-var_dump(getcwd() . "/tests/source/$file");
-//file_put_contents(getcwd() . "/tests/source/$file", $content);
+usleep($argv[2]);
+touch(getcwd(). "/".  $file);
+unlink($file);
