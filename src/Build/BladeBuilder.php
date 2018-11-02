@@ -16,18 +16,18 @@ class BladeBuilder implements BuilderInterface {
   private $buildContext;
   private $blade;
 
-  public function __construct(\Glomr\Build\BuildContext $buildContext) {
+  public function __construct(\Glomr\Build\BuildContext $buildContext, array $options = []) {
     $this->buildContext = $buildContext;
-    $cachePath = $this->buildContext->getPath('cache') . '/blade';
-    if(!file_exists($cachePath) && !is_dir($cachePath)) mkdir($cachePath, 0777, true);
-    $this->blade = new Blade($this->buildContext->getPath('source'), $cachePath);
+    $this->makeBlade();
+    isset($options['context'])? $this->setContext($options['context']) : $this->setContext($this->context);
   }
 
-  public function setContext(string $context) {
-    $this->context = $context;
-  }
+  private function makeBlade(){
+    $this->blade = new Blade(
+      $this->buildContext->getPath('source'),
+      $this->buildContext->getCachePath('blade')
+    );
 
-  public function beforeBuild(){
     $this->blade->compiler()->directive('style', function($expression){
       return '<link rel="stylesheet" href="' . htmlentities($expression) .  '" />';
     });
@@ -54,21 +54,31 @@ class BladeBuilder implements BuilderInterface {
     });
   }
 
-  public function build(array $buildArgs = []) {
-    $contextPath = $this->buildContext->getPath('source') . '/' . $this->context;
-    if(!file_exists($contextPath) && !is_dir($contextPath)){
-      throw new \RuntimeException("Context {$this->context} does not exist in " . $this->buildContext->getPath('source'));
+  private function setContext(string $context) {
+    $this->sourcePath = $this->buildContext->getPath('source') . '/' . $context;
+    if(!file_exists($this->sourcePath) && !is_dir($this->sourcePath)){
+      throw new \RuntimeException("Context {$context} does not exist in " . $this->buildContext->getPath('source'));
     }
+    $this->context = $context;
+  }
+
+  public function beforeBuild(){
+    return;
+  }
+
+  public function build(array $buildArgs = []) {
 
     foreach($this->buildContext->fetchSourceFiles($this->context, $this->regex) as $viewTemplate){
       $viewName = $this->viewNameFromSource($viewTemplate);
       $destination = $this->buildPathFromSource($viewTemplate);
 
+      /*
       if (!file_exists(dirname($destination))) {
         mkdir(dirname($destination), 0777, true);
       }
+      */
       try {
-        file_put_contents($destination, $this->blade->make($viewName, $buildArgs));
+        //file_put_contents($destination, $this->blade->make($viewName, $buildArgs));
       } catch (\InvalidArgumentException $e ) {
         Logr::log(Logr::Error, "Cannot find view! Name = ${$viewName}, path ${destination}\n");
       }
@@ -80,17 +90,28 @@ class BladeBuilder implements BuilderInterface {
     return;
   }
 
-  private function viewNameFromSource(string $path) {
+  /**
+   * strip sourceExtention
+   * Strip Source paths
+   * replace / with .
+   * @param  string $path path to a file in our source context
+   * @return string       converted view name
+   */
+  private function viewNameFromSource(string $path) :string {
     return str_replace('/', '.',
-      str_replace($this->buildContext->getPath('source') . '/' , '',
+      str_replace($this->sourcePath . '/' , '',
         str_replace($this->sourceExtension, '', $path)));
   }
 
-  private function buildPathFromSource(string $path) {
-    //start with the build path
-    //strip context from view name including first .
-    //replace remaining dots in view name with slashes
-    //add build extension
+  /**
+   * start with the build path
+   * strip context from view name including first .
+   * replace remaining dots in view name with slashes
+   * add build extension
+   * @param  string $path Source file path
+   * @return string       destination path
+   */
+  private function buildPathFromSource(string $path) :string {
     return $this->buildContext->getPath('build') . '/' .
       str_replace('.', '/', str_replace($this->context . ".", '', $this->viewNameFromSource($path))) .
       $this->buildExtension;

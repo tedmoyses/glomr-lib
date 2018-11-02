@@ -20,7 +20,7 @@ class InotifyWatcher extends GlomrTestCase {
       ->method('fetchSourceDirectories')
       ->will($this->returnValue([$this->sourcePath . '/testing']));
 
-    $this->bc->expects($this->exactly(2))
+    $this->bc->expects($this->atLeastOnce())
       ->method('getPath')
       ->with('source')
       ->will($this->returnValue($this->sourcePath));

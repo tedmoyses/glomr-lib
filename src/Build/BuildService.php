@@ -21,7 +21,7 @@ class BuildService {
       });
     } else {
       Logr::warn("Cannot add signal handler for shutdown");
-      Logr::warn("Watch for server process left running");
+      Logr::warn("Watch out for server process left running");
     }
     Logr::info("Starting build service");
   }

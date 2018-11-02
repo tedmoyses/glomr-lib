@@ -10,9 +10,9 @@ use League\Flysystem\Filesystem as Flysystem;
 
 class BuildContext {
   private $paths = [
-    'build' => 'null',
-    'source' => 'null',
-    'cache' => 'null'
+    'build' => null,
+    'source' => null,
+    'cache' => null
   ];
 
   private $_fs = null;
@@ -36,7 +36,7 @@ class BuildContext {
     $this->paths[$key] = $value;
   }
 
-  public function getPath($path){
+  public function getPath($path) :string {
     return $this->paths[$path];
   }
 
@@ -44,7 +44,7 @@ class BuildContext {
     if(in_array($env, ['production', 'dev'])) $this->environment = $env;
   }
 
-  public function getEnv(){
+  public function getEnv() :string{
     return $this->environment;
   }
 
@@ -54,6 +54,21 @@ class BuildContext {
 
   public function fetchSourceFiles(string $context = "", $regex = "/^.+$/i") :array {
     return $this->fetchFiles($this->getPath('source') . "/$context", $regex);
+  }
+
+  /**
+   * @TODO needs a test!
+   * @param  string $path [description]
+   * @return string       [description]
+   */
+  public function getCachePath(string $path) :string {
+    $cachePath = $this->getPath('cache') .'/'. $path;
+    $this->_fs->createDir($cachePath);
+    return $cachePath;
+  }
+
+  public function mtime(string $path) :int {
+    return $this->_fs->getTimestamp($path);
   }
 
   private function fetchDirectories(string $path = '*', $regex =  '/.*/') :array {
@@ -78,15 +93,5 @@ class BuildContext {
         }
       )
     );
-  }
-
-  public function getCachePath(string $path) :string {
-    $realpath = $this->getPath('cache') .'/'. $path;
-    $this->_fs->createDir($realpath);
-    return $realpath;
-  }
-
-  public function mtime(string $path) :int {
-    return $this->_fs->getTimestamp($path);
   }
 }
