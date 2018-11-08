@@ -79,8 +79,12 @@ class BladeBuilder implements BuilderInterface {
       */
       try {
         //file_put_contents($destination, $this->blade->make($viewName, $buildArgs));
+        $this->buildContext->putBuildFile(
+          $destination,
+          $this->blade->make($viewName, $buildArgs)
+        );
       } catch (\InvalidArgumentException $e ) {
-        Logr::log(Logr::Error, "Cannot find view! Name = ${$viewName}, path ${destination}\n");
+        Logr::error("Cannot find view! Name = ${viewName}, path ${destination}\n");
       }
     }
     return $buildArgs;

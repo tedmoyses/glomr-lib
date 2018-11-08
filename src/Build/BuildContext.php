@@ -4,8 +4,8 @@ namespace Glomr\Build;
 use Glomr\Watch\InotifyEventsWatcher;
 use Glomr\Watch\PollWatcher;
 use Glomr\Log\Logr;
-use Illuminate\Filesystem\Filesystem;
-use League\Flysystem\Adapter\Local;
+#use Illuminate\Filesystem\Filesystem;
+#use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem as Flysystem;
 
 class BuildContext {
@@ -54,6 +54,16 @@ class BuildContext {
 
   public function fetchSourceFiles(string $context = "", $regex = "/^.+$/i") :array {
     return $this->fetchFiles($this->getPath('source') . "/$context", $regex);
+  }
+
+  /**
+   * @TODO needs a test
+   * @param  string $destination file path relative to build directory
+   * @param  string $content     content to go in the file - most like a View object that supports __toString
+   * @return [type]              [description]
+   */
+  public function putBuildFile($destination, $content){
+    $this->_fs->put($this->getPath('build') . "/$destination", $content);
   }
 
   /**
