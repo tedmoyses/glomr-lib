@@ -56,6 +56,10 @@ class BuildContext {
     return $this->fetchFiles($this->getPath('source') . "/$context", $regex);
   }
 
+  public function fetchBuildFiles(string $context = "", $regex = "/^.+$/i") :array {
+    return $this->fetchFiles($this->getPath('build') . "/$context", $regex);
+  }
+
   /**
    * @TODO needs a test
    * @param  string $destination file path relative to build directory
