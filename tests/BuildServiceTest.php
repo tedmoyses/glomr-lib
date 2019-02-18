@@ -3,7 +3,7 @@ use Glomr\Test\GlomrTestCase;
 use Glomr\Build\BuildService;
 
 class BuildServiceTest extends GlomrTestCase {
-  public function setUp(){
+  public function setUp() :void {
     $this->fixture = new BuildService($this->getCleanBuildContext());
   }
 

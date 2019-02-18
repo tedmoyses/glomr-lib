@@ -6,7 +6,7 @@ use MatthiasMullie\Minify;
 
 
 class AssetBuilderTest extends GlomrTestCase {
-  public function setUp(){
+  public function setUp() :void  {
     $this->buildContext = $this->getCleanBuildContext();
     //mkdir($this->sourcePath . '/assets/js', 0777, true);
     //mkdir($this->sourcePath . '/assets/css', 0777, true);
@@ -87,10 +87,10 @@ EOT;
 
     //testing var and comments are NOT present in final files
     $this->assertFalse(strpos($scriptContent, 'First comment'));
-    $this->assertContains('testvar', $scriptContent);
+    $this->assertStringContainsString('testvar', $scriptContent);
     $this->assertFalse(strpos($scriptContent, '//Second comment'));
-    $this->assertContains('anothertest', $scriptContent);
-    $this->assertContains('foo+"bar"', $scriptContent);
+    $this->assertStringContainsString('anothertest', $scriptContent);
+    $this->assertStringContainsString('foo+"bar"', $scriptContent);
   }
 
   public function testBuildJsHighCompression(){
@@ -109,7 +109,7 @@ EOT;
     $this->assertFalse(strpos($scriptContent, 'First comment'));
     $this->assertFalse(strpos($scriptContent, 'testvar'));
     $this->assertFalse(strpos($scriptContent, '//Second comment'));
-    $this->assertContains('anothertest', $scriptContent);
+    $this->assertStringContainsString('anothertest', $scriptContent);
     $this->assertFalse(strpos($scriptContent, 'foo+"bar"'));
   }
 
@@ -143,8 +143,8 @@ EOT;
     $scriptContent = file_get_contents($scriptOutputPath);
 
     //check we still have our declarations wihtout wihitespace - all in one file
-    $this->assertContains('body{color:red}', $scriptContent);
-    $this->assertContains('body{font-size:20px}', $scriptContent);
+    $this->assertStringContainsString('body{color:red}', $scriptContent);
+    $this->assertStringContainsString('body{font-size:20px}', $scriptContent);
   }
 
   public function testBuildImages() {
@@ -171,7 +171,7 @@ EOT;
     $this->assertFileExists($this->buildContext->getPath('build') . '/assets/css/second.css');
   }
 
-  protected function tearDown(){
+  protected function tearDown() :void {
     //var_dump("Tearing down");
     $this->delTree($this->sourcePath);
     $this->delTree($this->buildPath);

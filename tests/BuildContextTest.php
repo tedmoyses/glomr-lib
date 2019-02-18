@@ -4,7 +4,7 @@ use Glomr\Test\GlomrTestCase;
 
 class BuildContextTest extends GlomrTestCase {
 
-  public function setUp(){
+  public function setUp() :void {
     $this->fixture = $this->getCleanBuildContext();
   }
 
@@ -49,7 +49,7 @@ class BuildContextTest extends GlomrTestCase {
     $this->assertTrue(is_dir($dirs[0]));
   }
 
-  protected function tearDown() {
+  protected function tearDown() :void {
     $this->delTree($this->buildPath);
     $this->delTree($this->sourcePath);
   }

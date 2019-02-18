@@ -36,7 +36,7 @@ class GlomrTestCase extends TestCase{
     return $buildContext;
   }
 
-  protected function tearDown(){
+  protected function tearDown(): void {
     $this->delTree($this->buildPath);
     $this->delTree($this->sourcePath);
     $this->delTree($this->cachePath);

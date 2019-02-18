@@ -9,7 +9,7 @@ use Glomr\Build\BuildContext;
  * @requires extension inotify
  */
 class InotifyWatcher extends GlomrTestCase {
-  public function setUp(){
+  public function setUp() :void {
     //$this->buildContext = $this->getCleanBuildContext();
     $this->bc = $this->getMockBuilder(BuildContext::class)
       ->disableOriginalConstructor()
@@ -42,7 +42,7 @@ class InotifyWatcher extends GlomrTestCase {
     $this->assertTrue($this->fixture->watch());
   }
 
-  protected function tearDown(){
+  protected function tearDown() :void {
     $this->delTree($this->sourcePath);
   }
 }

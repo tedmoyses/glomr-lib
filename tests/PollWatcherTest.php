@@ -5,7 +5,7 @@ use Glomr\Watch\PollWatcher;
 use Glomr\Build\BuildContext;
 
 class PolWatcherTest extends GlomrTestCase {
-  public function setUp(){
+  public function setUp() :void {
 
     //$this->fixture = new PollWatcher($this->getCleanBuildContext());
     $bc = $this->getMockBuilder(BuildContext::class)
@@ -31,7 +31,7 @@ class PolWatcherTest extends GlomrTestCase {
 
   }
 
-  public function testPollWatcher (){
+  public function testPollWatcher () :void {
     $this->assertTrue($this->fixture->watch());
     $this->assertTrue($this->fixture->watch());
   }

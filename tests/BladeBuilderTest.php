@@ -5,7 +5,7 @@ use Glomr\Build\BladeBuilder;
 use Glomr\Build\BuildContext;
 
 class BladeBuilderTest extends GlomrTestCase {
-  protected function setUp(){
+  protected function setUp() : void {
 
     if(!is_dir($this->sourcePath . '/templates')) mkdir($this->sourcePath . '/templates', 0777, true);
     if(!is_dir($this->cachePath . '/blade')) mkdir($this->cachePath . '/blade', 0777, true);
@@ -47,9 +47,9 @@ class BladeBuilderTest extends GlomrTestCase {
       ->with($this->buildPath . '/test.html', $this->callback(function ($arg){
         $this->isInstanceOf(\Illuminate\View\View::class, $arg);
         $content = $arg->__toString();
-        $this->assertContains('<title>Testing Blade Builder</title>', $content);
-        $this->assertContains('<p>Test content</p>', $content);
-        $this->assertContains('<p>testBuildVariableValue</p>', $content);
+        $this->assertStringContainsString('<title>Testing Blade Builder</title>', $content);
+        $this->assertStringContainsString('<p>Test content</p>', $content);
+        $this->assertStringContainsString('<p>testBuildVariableValue</p>', $content);
         return true;
       }));
 
@@ -58,7 +58,7 @@ class BladeBuilderTest extends GlomrTestCase {
     $fixture->build(['testBuildVariable' => 'testBuildVariableValue']);
   }
 
-  protected function tearDown(){
+  protected function tearDown() :void {
     unlink($this->sourcePath . '/templates/test.blade.php');
     unlink($this->sourcePath . '/layout.blade.php');
     rmdir($this->sourcePath . '/templates');
