@@ -103,7 +103,7 @@ class BladeBuilder implements BuilderInterface {
    */
   private function viewNameFromSource(string $path) :string {
     return str_replace('/', '.',
-      str_replace($this->sourcePath . '/' , '',
+      str_replace($this->buildContext->getPath('source') . '/' , '',
         str_replace($this->sourceExtension, '', $path)));
   }
 

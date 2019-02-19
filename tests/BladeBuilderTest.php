@@ -30,8 +30,8 @@ class BladeBuilderTest extends GlomrTestCase {
 
     $mockBuildContext->expects($this->atLeastOnce())
       ->method('getPath')
-      ->withConsecutive(['source'], ['source'], ['build'], ['build'])
-      ->willReturnOnConsecutiveCalls($this->sourcePath, $this->sourcePath, $this->buildPath, $this->buildPath);
+      ->withConsecutive(['source'], ['source'], ['source'], ['build'], ['source'], ['build'])
+      ->willReturnOnConsecutiveCalls($this->sourcePath, $this->sourcePath, $this->sourcePath, $this->buildPath, $this->sourcePath, $this->buildPath);
 
     $mockBuildContext->expects($this->atLeastOnce())
       ->method('getCachePath')

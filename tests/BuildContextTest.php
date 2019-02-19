@@ -1,11 +1,20 @@
 <?php
 
 use Glomr\Test\GlomrTestCase;
+use Glomr\Build\BuildContext;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem as Flysystem;
 
 class BuildContextTest extends GlomrTestCase {
 
   public function setUp() :void {
     $this->fixture = $this->getCleanBuildContext();
+  }
+
+  public function testFailsOnAbsolutPath(){
+    $this->expectException(RuntimeException::class);
+    $fs = new Flysystem(new Local(getcwd()));
+    $bc = new BuildContext($fs, '/tmp/source/', '/tmp/build', '/tmp/cache');
   }
 
   public function testCanFindFiles(){

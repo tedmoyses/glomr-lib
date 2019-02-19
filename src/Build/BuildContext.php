@@ -33,6 +33,12 @@ class BuildContext {
 
   private function setPath(string $key, string $value){
     if(!$this->_fs->has($value)) $this->_fs->createDir($value);
+    if(substr($value, 0, 1) === '/') {
+      throw new \RuntimeException("Paths must be raltive not absolute");
+      return;
+    }
+    if(substr($value, -1, 1) === '/') $avlue = substr($avlue, -1, 1);
+    if(substr($value,0,2) === './') $value = substr($value,2);
     $this->paths[$key] = $value;
   }
 
