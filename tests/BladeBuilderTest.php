@@ -30,7 +30,7 @@ class BladeBuilderTest extends GlomrTestCase {
 
     $mockBuildContext->expects($this->atLeastOnce())
       ->method('getPath')
-      ->withConsecutive(['source'], ['source'], ['source'], ['build'], ['source'], ['build'])
+      ->withConsecutive(['source'], ['source'], ['source'], ['source'], ['source'], ['build'])
       ->willReturnOnConsecutiveCalls($this->sourcePath, $this->sourcePath, $this->sourcePath, $this->buildPath, $this->sourcePath, $this->buildPath);
 
     $mockBuildContext->expects($this->atLeastOnce())
@@ -44,7 +44,7 @@ class BladeBuilderTest extends GlomrTestCase {
 
     $mockBuildContext->expects($this->atLeastOnce())
       ->method('putBuildFile')
-      ->with($this->buildPath . '/test.html', $this->callback(function ($arg){
+      ->with('test.html', $this->callback(function ($arg){
         $this->isInstanceOf(\Illuminate\View\View::class, $arg);
         $content = $arg->__toString();
         $this->assertStringContainsString('<title>Testing Blade Builder</title>', $content);

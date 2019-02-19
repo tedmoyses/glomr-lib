@@ -12,7 +12,7 @@ class PollWatcher extends WatchAbstractClass {
 
   public function __construct(\Glomr\Build\BuildContext $buildContext, $options = []) {
     $this->buildContext = $buildContext;
-    if (isset($options['interval'])) $this->interval = $interval;
+    if (isset($options['interval'])) $this->interval = $options['interval'];
   }
 
   public function watch(){

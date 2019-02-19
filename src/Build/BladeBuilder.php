@@ -116,8 +116,8 @@ class BladeBuilder implements BuilderInterface {
    * @return string       destination path
    */
   private function buildPathFromSource(string $path) :string {
-    return $this->buildContext->getPath('build') . '/' .
-      str_replace('.', '/', str_replace($this->context . ".", '', $this->viewNameFromSource($path))) .
+    //return $this->buildContext->getPath('build') . '/' .
+    return str_replace('.', '/', str_replace($this->context . ".", '', $this->viewNameFromSource($path))) .
       $this->buildExtension;
   }
 }

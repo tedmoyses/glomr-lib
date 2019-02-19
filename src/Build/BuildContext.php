@@ -34,7 +34,7 @@ class BuildContext {
   private function setPath(string $key, string $value){
     if(!$this->_fs->has($value)) $this->_fs->createDir($value);
     if(substr($value, 0, 1) === '/') {
-      throw new \RuntimeException("Paths must be raltive not absolute");
+      throw new \RuntimeException("Paths must be relative not absolute");
       return;
     }
     if(substr($value, -1, 1) === '/') $avlue = substr($avlue, -1, 1);
@@ -95,7 +95,7 @@ class BuildContext {
     return array_map(
       function ($el) {return $el['path'];},
       array_filter(
-        $this->_fs->listContents($path),
+        $this->_fs->listContents($path, true),
         function ($path) use ($regex) {
           return ($path['type'] == 'dir' && preg_match($regex, $path['path']) !== 0);
         }
@@ -107,7 +107,7 @@ class BuildContext {
     return array_map(
       function ($el) {return $el['path'];},
       array_filter(
-        $this->_fs->listContents($from),
+        $this->_fs->listContents($from, true),
         function ($path) use ($regex) {
           return ($path['type'] == 'file' && preg_match($regex, $path['path']) !== 0);
         }

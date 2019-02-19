@@ -10,6 +10,7 @@ use Glomr\Log\Logr;
 class BuildService {
   private $server = null;
   private $builders = [];
+  private $watcher;
 
   public function __construct(\Glomr\Build\BuildContext $buildContext){
     $this->buildContext = $buildContext;
@@ -36,10 +37,10 @@ class BuildService {
 
   public function watch(int $interval,  $usePoller = false ){
     if($this->watcher === null){
-      if(defined(IN_CLOSE_WRITE) && !$usePoller){
-        $this->watcher = new InotifyEventsWatcher($this->buildContext, $interval);
+      if(defined('IN_CLOSE_WRITE') && !$usePoller){
+        $this->watcher = new InotifyEventsWatcher($this->buildContext, ['interval' => $interval]);
       } else {
-        $this->watcher = new PollWatcher($this->buildContext, $interval);
+        $this->watcher = new PollWatcher($this->buildContext, ['interval' => $interval]);
       }
     }
     Logr::info("Watching source files, press Ctrl + C to quit");
