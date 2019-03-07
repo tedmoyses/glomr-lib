@@ -31,7 +31,7 @@ class BuildContext {
     $this->setPath('cache', $cachePath);
   }
 
-  private function setPath(string $key, string $value){
+  private function setPath(string $key, string $value) {
     if(!$this->_fs->has($value)) $this->_fs->createDir($value);
     if(substr($value, 0, 1) === '/') {
       throw new \RuntimeException("Paths must be relative not absolute");
@@ -46,7 +46,7 @@ class BuildContext {
     return $this->paths[$path];
   }
 
-  public function setEnv($env){
+  public function setEnv($env) :void {
     if(in_array($env, ['production', 'dev'])) $this->environment = $env;
   }
 
@@ -72,7 +72,7 @@ class BuildContext {
    * @param  string $content     content to go in the file - most like a View object that supports __toString
    * @return [type]              [description]
    */
-  public function putBuildFile($destination, $content){
+  public function putBuildFile($destination, $content) :void {
     $this->_fs->put($this->getPath('build') . "/$destination", $content);
   }
 
@@ -113,5 +113,12 @@ class BuildContext {
         }
       )
     );
-  }
+	}
+
+	/**
+	 * @todo write tests!!
+	 */
+	private function cleanBuildDir() :void {
+		$this->_fs->deleteDir($this->getPath('build'));
+	}
 }

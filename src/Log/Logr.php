@@ -11,7 +11,8 @@ class Logr {
   private static $loggerInstance = null;
   private static $errorInstance = null;
   private static $channel = 'Glomr';
-  private static $debug = false;
+	private static $debug = false;
+	private static $colour = true;
 
   public static function error($message, $arr1 = [], $arr2 = []){
     if(self::$errorInstance === null){
@@ -46,6 +47,11 @@ class Logr {
     else self::$debug = true;
   }
 
+  public static function setColour($color = false){
+    if($colour === false) self::$colour = false;
+    else self::$colour = true;
+  }
+
   private static function makeInstance($level){
     if ( defined('PHPUNIT_COMPOSER_INSTALL') || defined('__PHPUNIT_PHAR__')) {
       $stream = '/dev/null';
@@ -56,7 +62,8 @@ class Logr {
     }
     $instance = new Logger(self::$channel);
     $handler = new StreamHandler($stream, self::$debug ? Logger::DEBUG : Logger::INFO);
-    $handler->setFormatter(new ColoredLineFormatter(null, "%message% %context% %extra%\n", null, false, true));
+		if(self::$colour) $handler->setFormatter(new ColoredLineFormatter(null, "%message% %context% %extra%\n", null, false, true));
+		else $handler->setFormatter(new LineFormatter("%message% %context% %extra%", null, false, true));
     $instance->pushHandler($handler);
     return $instance;
   }

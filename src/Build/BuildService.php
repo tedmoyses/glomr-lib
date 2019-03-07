@@ -49,8 +49,11 @@ class BuildService {
     }
   }
 
-  public function build($buildArgs = []){
-    $starttime = microtime(true);
+  public function build($buildArgs = []) :bool{
+		$starttime = microtime(true);
+		if($this->buildContext->getEnv() === 'production'){
+			$this->buildContext->cleanBuildDir();
+		}
     Logr::info("Starting build ...");
     $buildArgs['buildID'] = substr(sha1(microtime()), 0, 7);
     foreach($this->builders as $builder) {

@@ -21,8 +21,7 @@ class BladeBuilderTest extends GlomrTestCase {
     </body></html>");
   }
 
-  public function testBuild() {
-
+  protected function getBuildContext(){
     $mockBuildContext = $this->getMockBuilder(BuildContext::class)
       ->disableOriginalConstructor()
       ->setMethods(['getCachePath', 'getPath', 'fetchSourceFiles', 'putBuildFile'])
@@ -42,6 +41,12 @@ class BladeBuilderTest extends GlomrTestCase {
       ->method('fetchSourceFiles')
       ->will($this->returnValue(['templates/test.blade.php']));
 
+   return $mockBuildContext;
+  }
+
+  public function testBuild() {
+    $mockBuildContext = $this->getBuildContext();
+     
     $mockBuildContext->expects($this->atLeastOnce())
       ->method('putBuildFile')
       ->with('test.html', $this->callback(function ($arg){
@@ -52,8 +57,27 @@ class BladeBuilderTest extends GlomrTestCase {
         $this->assertStringContainsString('<p>testBuildVariableValue</p>', $content);
         return true;
       }));
-
     $fixture = new BladeBuilder($mockBuildContext);
+
+    $fixture->build(['testBuildVariable' => 'testBuildVariableValue']);
+  }
+
+  public function testBuildWithIndex(){
+    $mockBuildContext = $this->getBuildContext();
+     
+    $mockBuildContext->expects($this->atLeastOnce())
+      ->method('putBuildFile')
+      ->with('test/index.html', $this->callback(function ($arg){
+        $this->isInstanceOf(\Illuminate\View\View::class, $arg);
+        $content = $arg->__toString();
+        $this->assertStringContainsString('<title>Testing Blade Builder</title>', $content);
+        $this->assertStringContainsString('<p>Test content</p>', $content);
+        $this->assertStringContainsString('<p>testBuildVariableValue</p>', $content);
+        return true;
+      }));
+
+    $fixture = new BladeBuilder($mockBuildContext, ['useIndexes' => true]);
+
 
     $fixture->build(['testBuildVariable' => 'testBuildVariableValue']);
   }

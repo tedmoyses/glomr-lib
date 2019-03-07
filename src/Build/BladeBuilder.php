@@ -20,6 +20,7 @@ class BladeBuilder implements BuilderInterface {
     $this->buildContext = $buildContext;
     $this->makeBlade();
     isset($options['context'])? $this->setContext($options['context']) : $this->setContext($this->context);
+    isset($options['useIndexes'])? $this->useIndexes = true : $this->useIndexes = false;
   }
 
   private function makeBlade(){
@@ -66,19 +67,16 @@ class BladeBuilder implements BuilderInterface {
     return;
   }
 
-  public function build(array $buildArgs = []) {
+  public function build(array $buildArgs = []) :array {
 
     foreach($this->buildContext->fetchSourceFiles($this->context, $this->regex) as $viewTemplate){
       $viewName = $this->viewNameFromSource($viewTemplate);
       $destination = $this->buildPathFromSource($viewTemplate);
-
-      /*
-      if (!file_exists(dirname($destination))) {
-        mkdir(dirname($destination), 0777, true);
+      if($this->useIndexes) {
+        $destination = str_replace($this->buildExtension, '/index'.$this->buildExtension, $destination);
       }
-      */
+
       try {
-        //file_put_contents($destination, $this->blade->make($viewName, $buildArgs));
         $this->buildContext->putBuildFile(
           $destination,
           $this->blade->make($viewName, $buildArgs)

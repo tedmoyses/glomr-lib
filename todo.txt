@@ -11,3 +11,15 @@
 *Allow creating of build variables in each builder to be passed to the next builder by returning build vars from build and merging them
 test the cssScripts and jsScripts methods actually work in production 
 and dev
+
+*add a clean option to build that cleans out the build directory before
+*building - is this a thing here or perhaps for glomr-tool?
+ -needs a buildContext method to clean the build 
+ -perhaps buildService has a proxy method to this function?
+ implemented by building clean if productin environment set
+
+*Option to remove colour from logging
+
+Need to add option (default on) to create /index.html for all links with pages as folders
+
+
