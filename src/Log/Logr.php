@@ -4,6 +4,7 @@ namespace Glomr\Log;
 
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+use Monolog\Formatter\LineFormatter;
 use \Bramus\Monolog\Formatter\ColoredLineFormatter;
 
 class Logr {
@@ -47,7 +48,7 @@ class Logr {
     else self::$debug = true;
   }
 
-  public static function setColour($color = false){
+  public static function setColour($colour = false){
     if($colour === false) self::$colour = false;
     else self::$colour = true;
   }
@@ -63,7 +64,7 @@ class Logr {
     $instance = new Logger(self::$channel);
     $handler = new StreamHandler($stream, self::$debug ? Logger::DEBUG : Logger::INFO);
 		if(self::$colour) $handler->setFormatter(new ColoredLineFormatter(null, "%message% %context% %extra%\n", null, false, true));
-		else $handler->setFormatter(new LineFormatter("%message% %context% %extra%", null, false, true));
+		else $handler->setFormatter(new LineFormatter("%message% %context% %extra%\n", null, false, true))
     $instance->pushHandler($handler);
     return $instance;
   }
