@@ -64,7 +64,7 @@ class Logr {
     $instance = new Logger(self::$channel);
     $handler = new StreamHandler($stream, self::$debug ? Logger::DEBUG : Logger::INFO);
 		if(self::$colour) $handler->setFormatter(new ColoredLineFormatter(null, "%message% %context% %extra%\n", null, false, true));
-		else $handler->setFormatter(new LineFormatter("%message% %context% %extra%\n", null, false, true))
+		else $handler->setFormatter(new LineFormatter("%message% %context% %extra%\n", null, false, true));
     $instance->pushHandler($handler);
     return $instance;
   }
