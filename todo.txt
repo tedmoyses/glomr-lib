@@ -22,4 +22,5 @@ and dev
 
 Need to add option (default on) to create /index.html for all links with pages as folders
 
+Need to create a flat file builder - takes an array of files to just move with no other requirements
 

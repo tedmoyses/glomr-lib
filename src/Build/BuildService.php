@@ -35,7 +35,7 @@ class BuildService {
     if($this->server === null) $this->server = new PhpServer($address, $port, $root, $script);
   }
 
-  public function watch(int $interval,  $usePoller = false ){
+  public function watch(int $interval,  $usePoller = false, $vars = [] ){
     if($this->watcher === null){
       if(defined('IN_CLOSE_WRITE') && !$usePoller){
         $this->watcher = new InotifyEventsWatcher($this->buildContext, ['interval' => $interval]);
@@ -45,7 +45,7 @@ class BuildService {
     }
     Logr::info("Watching source files, press Ctrl + C to quit");
     while($this->watcher->watch()){
-      $this->build();
+      $this->build($vars);
     }
   }
 
