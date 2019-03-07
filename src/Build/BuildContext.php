@@ -118,7 +118,7 @@ class BuildContext {
 	/**
 	 * @todo write tests!!
 	 */
-	private function cleanBuildDir() :void {
+	public function cleanBuildDir() :void {
 		$this->_fs->deleteDir($this->getPath('build'));
 	}
 }
