@@ -70,11 +70,14 @@ class AssetBuilder implements BuilderInterface {
     return array_merge($buildArgs, ['assets' => $this->getBuiltAssets()]);
   }
 
-  private function getBuiltAssets($from="") :array{
-    return $this->buildContext->fetchBuildFiles(
+	private function getBuiltAssets($from="") :array {
+		$strip = $this->buildContext->getPath('build');
+		return array_map(function($item) use ($strip) {
+		  return str_replace($strip, '', $item);
+		}, $this->buildContext->fetchBuildFiles(
       $this->sourceContext,
       '/^.*(\.css)|(\.js)$/i'
-    );
+    ));
   }
 
   private function buildJsAssets(array $buildArgs){
